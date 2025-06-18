@@ -2,6 +2,7 @@ import requests
 import allure
 from .base_endpoint import Endpoint
 
+
 class DeleteMeme(Endpoint):
 
     @allure.feature('DELETE request')

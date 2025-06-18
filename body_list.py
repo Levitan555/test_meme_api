@@ -40,6 +40,5 @@ post_negative_body_400 = ['', {}, [], (), {
                           ]
 combine_post_negative_body = [
                                  ('400', body) for body in post_negative_body_400] + [
-    ('500', body) for body in post_negative_body_500
-]
-
+                                 ('500', body) for body in post_negative_body_500
+                             ]

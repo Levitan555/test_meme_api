@@ -5,6 +5,7 @@ from .base_endpoint import Endpoint
 
 invalid_token = '9e1VKdNBc3vFhN3'
 
+
 class Authorize(Endpoint):
     body = {'name': 'sergey'}
 
@@ -15,7 +16,6 @@ class Authorize(Endpoint):
         self.response = requests.post(f'{self.url}/authorize', json=self.body)
         auth_token = self.response.json()['token']
         return {'Authorization': auth_token}
-
 
     @allure.feature('Authorization')
     @allure.story('Checking that the token is alive')
@@ -44,7 +44,6 @@ class Authorize(Endpoint):
         assert type(self.response.json()) == dict, 'Type is not dict'
         assert self.response.json()['user'] == self.body['name'], 'Value "name" is incorrect'
 
-
     @allure.feature('Authorization')
     @allure.story('Checking authorisation with invalid body')
     @allure.step('Проверка авторизации с недопустимым телом')
@@ -54,12 +53,3 @@ class Authorize(Endpoint):
             print(f' Bug: получил статус код {self.response.status_code} с данными {body}, вместо {status}')
         else:
             assert self.response.status_code == int(status), 'Status code is incorrect'
-
-
-
-
-
-
-
-
-

@@ -2,6 +2,7 @@ import requests
 import allure
 from .base_endpoint import Endpoint
 
+
 class UpdateMeme(Endpoint):
 
     @allure.feature('PUT request')
@@ -15,7 +16,7 @@ class UpdateMeme(Endpoint):
                 'url': 'https://i.imgflip.com/7f9vxf.jpg',
                 'tags': ['first', 'selfie'],
                 'info': {'monkey': 'selfie'}
-    }, headers=return_token)
+            }, headers=return_token)
         return self.response.json()
 
     @allure.feature('PUT request')
@@ -38,7 +39,6 @@ class UpdateMeme(Endpoint):
                 'info': {'monkey': 'selfie'}
             }, headers=return_token)
         assert self.response.status_code == 403, 'Status code is incorrect'
-
 
     @allure.feature('PUT request')
     @allure.story('Empty body meme edit')

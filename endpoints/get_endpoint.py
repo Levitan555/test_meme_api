@@ -2,6 +2,7 @@ import requests
 import allure
 from .base_endpoint import Endpoint
 
+
 class GetMeme(Endpoint):
 
     @allure.feature('GET request')
@@ -16,7 +17,5 @@ class GetMeme(Endpoint):
     @allure.step('Запрос мема по id')
     def get_meme_id(self, create_post, return_token):
         self.response = requests.get(f'{self.url}/meme/{create_post['id']}', headers=return_token)
-        # assert self.response.json()['id'] == meme_id, 'ID is incorrect'
+        assert self.response.json()['id'] == create_post['id'], 'ID is incorrect'
         return self.response
-
-

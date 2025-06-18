@@ -12,6 +12,7 @@ def test_authorize(return_token, status, body):
     return_token.assert_type_body()
     return_token.assert_invalid_body(status, body)
 
+
 @allure.title('Проверка, жив ли токен')
 def test_life_token(return_assert_live_token, return_token):
     return_assert_live_token.assert_life_token(return_token)
@@ -19,17 +20,20 @@ def test_life_token(return_assert_live_token, return_token):
     return_assert_live_token.assert_authorize_response_text()
     return_assert_live_token.assert_authorize_invalid_token()
 
+
 @allure.title('Получаем все объекты')
 def test_get_meme(return_get_meme, return_token):
     return_get_meme.get_meme(return_token.auth_post())
     return_get_meme.check_status_code_is_200()
     return_get_meme.check_that_body_is_json()
 
+
 @allure.title('Запрос на получение мема по id')
 def test_get_meme_id(return_get_meme_id, create_post, return_token):
     return_get_meme_id.get_meme_id(create_post, return_token.auth_post())
     return_get_meme_id.check_status_code_is_200()
     return_get_meme_id.check_that_body_is_json()
+
 
 @allure.title('Создание мема')
 @pytest.mark.parametrize('status, body', combine_post_negative_body)
@@ -56,4 +60,3 @@ def test_delete_meme(return_delete_meme, return_post_meme, create_post, return_t
     post_data = return_post_meme.post_meme(return_token.auth_post())
     return_delete_meme.delete_meme(post_data['id'], return_token.auth_post())
     return_delete_meme.check_that_post_deleted(create_post, return_token.auth_post())
-
