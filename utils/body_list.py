@@ -3,7 +3,9 @@ auth_invalid_body_500 = [262567165, ['name', 'sergey'], 'name sergey', ('name', 
 auth_invalid_body_400 = [
     {'name': ''}, {'batman': 'sergey'}, '', {'name': 675387}, {'': ''}, {'name': ' sergey'}, {'name': 'sergey '}
 ]
-combine_data = [('500', body) for body in auth_invalid_body_500] + [('400', body) for body in auth_invalid_body_400]
+combine_data_500 = [('500', body) for body in auth_invalid_body_500]
+combine_data_400 = [('400', body) for body in auth_invalid_body_400]
+invalid_token = '9e1VKdNBc3vFhN3'
 
 # body lists for post request
 positive_body = {
@@ -38,7 +40,5 @@ post_negative_body_400 = ['', {}, [], (), {
                               'info': ('monkey', 'selfie')
                           }
                           ]
-combine_post_negative_body = [
-                                 ('400', body) for body in post_negative_body_400] + [
-                                 ('500', body) for body in post_negative_body_500
-                             ]
+combine_post_negative_body_400 = [('400', body) for body in post_negative_body_400]
+combine_post_negative_body_500 = [('500', body) for body in post_negative_body_500]

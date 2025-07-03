@@ -1,5 +1,5 @@
 class Endpoint:
-    url = 'http://167.172.172.115:52355/'
+    url = 'http://memesapi.course.qa-practice.com/'
     response = None
 
     def check_status_code_is_200(self):

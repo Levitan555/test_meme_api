@@ -7,7 +7,7 @@ from endpoints.delete_meme import DeleteMeme
 
 
 @pytest.fixture(scope='session')
-def create_post(return_post_meme, return_token, return_delete_meme):
+def create_meme(return_post_meme, return_token, return_delete_meme):
     post_data = return_post_meme.post_meme(return_token.auth_post())
     yield post_data
     return_delete_meme.delete_meme(post_data['id'], return_token.auth_post())
