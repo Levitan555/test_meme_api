@@ -1,97 +1,99 @@
 import pytest
 import allure
-from utils.body_list import combine_data_500
-from utils.body_list import combine_data_400
-from utils.body_list import combine_post_negative_body_400
-from utils.body_list import combine_post_negative_body_500
+from utils.body_for_auth import combine_data_500
+from utils.body_for_auth import combine_data_400
+from utils.body_for_create import combine_post_negative_body_400
+from utils.body_for_create import combine_post_negative_body_500
+from utils.body_for_auth import body_auth
+from utils.body_for_auth import body_auth_for_update
+from utils.body_for_auth import expected_text
+from utils.body_for_update import body_for_put
 
 
 @allure.title('Авторизация')
-def test_authorize(return_token):
-    return_token.auth_post()
-    return_token.check_status_code_is_200()
-    return_token.check_type_body()
+def test_authorize(endpoint_auth):
+    endpoint_auth.authorization(body_auth)
+    endpoint_auth.check_type_body()
 
 
 @allure.title('Проверяем код 500 на авторизацию, при невалидном теле')
 @pytest.mark.parametrize('status, body', combine_data_500)
-def test_authorized_with_invalid_body_code_500(return_token, status, body):
-    return_token.check_authorization_with_invalid_body(status, body)
+def test_authorized_with_invalid_body_code_500(endpoint_auth, status, body):
+    endpoint_auth.check_authorization_with_invalid_body(status, body)
 
 
 @allure.title('Проверяем код 400 на авторизацию, при невалидном теле')
 @pytest.mark.parametrize('status, body', combine_data_400)
-def test_authorized_with_invalid_body_code_400(return_token, status, body):
-    return_token.check_authorization_with_invalid_body(status, body)
+def test_authorized_with_invalid_body_code_400(endpoint_auth, status, body):
+    endpoint_auth.check_authorization_with_invalid_body(status, body)
 
 
 @allure.title('Проверка, жив ли токен')
-def test_life_token(return_assert_live_token, return_token):
-    return_assert_live_token.check_life_token(return_token)
-    return_assert_live_token.check_status_code_is_200()
-    return_assert_live_token.check_authorize_response_text()
+def test_life_token(auth_token_endpoint, endpoint_auth):
+    auth_token_endpoint.check_life_token(endpoint_auth, body_auth)
+    auth_token_endpoint.check_authorization_response_text(expected_text)
 
 
 @allure.title('Авторизация с невалидным токеном')
-def test_authorized_with_invalid_token(return_assert_live_token):
-    return_assert_live_token.check_authorize_with_invalid_token()
+def test_authorized_with_invalid_token(auth_token_endpoint):
+    auth_token_endpoint.check_authorization_with_invalid_token()
 
 
 @allure.title('Получаем все объекты')
-def test_get_meme(return_get_meme, return_token):
-    return_get_meme.get_all_meme(return_token.auth_post())
-    return_get_meme.check_status_code_is_200()
-    return_get_meme.check_that_body_is_json()
+def test_get_meme(get_endpoint, endpoint_auth):
+    get_endpoint.get_all_meme(endpoint_auth.authorization(body_auth))
+    get_endpoint.check_that_body_is_json()
+    get_endpoint.chack_that_json_is_not_empty()
 
 
 @allure.title('Запрос на получение мема по id')
-def test_get_meme_id(return_get_meme_id, create_meme, return_token):
-    return_get_meme_id.get_meme_id(create_meme, return_token.auth_post())
-    return_get_meme_id.check_status_code_is_200()
-    return_get_meme_id.check_that_id_is_correct(create_meme)
-    return_get_meme_id.check_that_body_is_json()
+def test_get_meme_id(get_id_endpoint, default_meme, endpoint_auth):
+    get_id_endpoint.get_meme_id(default_meme, endpoint_auth.authorization(body_auth))
+    get_id_endpoint.check_that_id_is_correct(default_meme)
+    get_id_endpoint.check_that_body_is_json()
+    get_id_endpoint.chack_that_json_is_not_empty()
 
 
 @allure.title('Создание мема')
-def test_post_meme(return_post_meme, return_token):
-    post_data = return_post_meme.post_meme(return_token.auth_post())
-    return_post_meme.check_status_code_is_200()
-    return_post_meme.check_that_body_is_json()
-    return_post_meme.check_that_post_created(post_data, return_token.auth_post())
+def test_create_meme(create_endpoint, endpoint_auth):
+    post_data = create_endpoint.create_meme(endpoint_auth.authorization(body_auth))
+    create_endpoint.check_that_body_is_json()
+    create_endpoint.chack_that_json_is_not_empty()
+    create_endpoint.check_that_meme_created(post_data, endpoint_auth.authorization(body_auth))
 
 
 @allure.title('Проверяем код 400, при создании мема с невалидным телом')
 @pytest.mark.parametrize('status, body', combine_post_negative_body_400)
-def test_post_meme_with_invalid_body_code_400(return_post_meme, status, body, return_token):
-    return_post_meme.check_post_meme_with_invalid_body(status, body, return_token.auth_post())
+def test_create_meme_with_invalid_body_code_400(create_endpoint, status, body, endpoint_auth):
+    create_endpoint.check_creation_meme_with_invalid_body(status, body, endpoint_auth.authorization(body_auth))
 
 
 @allure.title('Проверяем код 500, при создании мема с невалидным телом')
 @pytest.mark.parametrize('status, body', combine_post_negative_body_500)
-def test_post_meme_with_invalid_body_code_500(return_post_meme, status, body, return_token):
-    return_post_meme.check_post_meme_with_invalid_body(status, body, return_token.auth_post())
+def test_create_meme_with_invalid_body_code_500(create_endpoint, status, body, endpoint_auth):
+    create_endpoint.check_creation_meme_with_invalid_body(status, body, endpoint_auth.authorization(body_auth))
 
 
 @allure.title('Изменение мема')
-def test_update_meme(return_change_meme, create_meme, return_token):
-    meme_data_update = return_change_meme.change_meme(create_meme, return_token.auth_post())
-    return_change_meme.check_status_code_is_200()
-    return_change_meme.check_that_meme_updated(meme_data_update, return_token.auth_post())
-    return_change_meme.check_that_body_is_json()
+def test_update_meme(update_endpoint, default_meme, endpoint_auth):
+    updated_meme = update_endpoint.change_meme(default_meme, endpoint_auth.authorization(body_auth), body_for_put)
+    update_endpoint.check_that_meme_updated(updated_meme, endpoint_auth.authorization(body_auth))
+    update_endpoint.check_that_body_is_json()
+    update_endpoint.chack_that_json_is_not_empty()
 
 
 @allure.title('Пробуем изменить чужой мем')
-def test_change_someone_meme(return_change_meme, return_token):
-    return_change_meme.trying_to_change_someone_meme(return_token.auth_post())
+def test_update_someone_meme(update_endpoint, default_meme, endpoint_auth):
+    update_endpoint.trying_to_update_someone_meme(default_meme, endpoint_auth.authorization(body_auth_for_update))
 
 
 @allure.title('Пробуем изменить тело мема на пустое')
-def test_put_meme_with_empty_body(return_change_meme, create_meme, return_token):
-    return_change_meme.check_put_empty_body(create_meme, return_token.auth_post())
+def test_update_meme_with_empty_body(update_endpoint, default_meme, endpoint_auth):
+    update_endpoint.check_update_empty_body(default_meme, endpoint_auth.authorization(body_auth))
 
 
 @allure.title('Удаление мема')
-def test_delete_meme(return_delete_meme, return_post_meme, create_meme, return_token):
-    meme_data = return_post_meme.post_meme(return_token.auth_post())
-    return_delete_meme.delete_meme(meme_data['id'], return_token.auth_post())
-    return_delete_meme.check_that_meme_deleted(create_meme, return_token.auth_post())
+def test_delete_meme(delete_endpoint, create_endpoint, default_meme, endpoint_auth):
+    created_meme = create_endpoint.create_meme(endpoint_auth.authorization(body_auth))
+    delete_endpoint.delete_meme(created_meme['id'], endpoint_auth.authorization(body_auth))
+    delete_endpoint.check_that_meme_deleted(default_meme, endpoint_auth.authorization(body_auth))

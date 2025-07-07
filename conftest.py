@@ -4,45 +4,46 @@ from endpoints.get_endpoint import GetMeme
 from endpoints.post_endpoint import PostMeme
 from endpoints.update_meme import UpdateMeme
 from endpoints.delete_meme import DeleteMeme
+from utils.body_for_auth import body_auth
 
 
 @pytest.fixture(scope='session')
-def create_meme(return_post_meme, return_token, return_delete_meme):
-    post_data = return_post_meme.post_meme(return_token.auth_post())
+def default_meme(create_endpoint, endpoint_auth, delete_endpoint):
+    post_data = create_endpoint.create_meme(endpoint_auth.authorization(body_auth))
     yield post_data
-    return_delete_meme.delete_meme(post_data['id'], return_token.auth_post())
+    delete_endpoint.delete_meme(post_data['id'], endpoint_auth.authorization(body_auth))
 
 
 @pytest.fixture(scope='session')
-def return_token():
+def endpoint_auth():
     return Authorize()
 
 
 @pytest.fixture()
-def return_assert_live_token():
+def auth_token_endpoint():
     return Authorize()
 
 
 @pytest.fixture()
-def return_get_meme():
+def get_endpoint():
     return GetMeme()
 
 
 @pytest.fixture()
-def return_get_meme_id():
+def get_id_endpoint():
     return GetMeme()
 
 
 @pytest.fixture(scope='session')
-def return_post_meme():
+def create_endpoint():
     return PostMeme()
 
 
 @pytest.fixture()
-def return_change_meme():
+def update_endpoint():
     return UpdateMeme()
 
 
 @pytest.fixture(scope='session')
-def return_delete_meme():
+def delete_endpoint():
     return DeleteMeme()
